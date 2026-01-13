@@ -30,6 +30,9 @@ export default function App() {
   const [newSN, setNewSN] = useState('');
   const [raison, setRaison] = useState('');
 
+  // URL DU LOGO OFFICIEL
+  const LOGO_URL = "https://karamabus.ma/wp-content/uploads/2024/04/logo-KaramaBus-black.png";
+
   // --- LOGIQUE AUTHENTIFICATION ---
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -142,7 +145,10 @@ export default function App() {
     return (
       <div className="h-screen flex items-center justify-center bg-[#1a1a1a]">
         <form onSubmit={handleLogin} className="bg-white p-10 border-t-8 border-[#ff6600] w-96 shadow-2xl">
-          <h1 className="text-2xl font-black italic mb-6 text-center uppercase text-black">KARAMABUS KHENIFRA</h1>
+          <div className="flex justify-center mb-6">
+            <img src={LOGO_URL} alt="Karamabus" className="h-16" />
+          </div>
+          <h1 className="text-xl font-black italic mb-6 text-center uppercase text-black">Service Technique</h1>
           <div className="space-y-4">
             <input type="email" placeholder="Email Technique" className="w-full border-2 p-3 font-bold" onChange={e => setEmail(e.target.value)} required />
             <input type="password" placeholder="Mot de passe" className="w-full border-2 p-3 font-bold" onChange={e => setPassword(e.target.value)} required />
@@ -155,13 +161,12 @@ export default function App() {
 
   if (loading) return <div className="h-screen flex items-center justify-center font-black animate-pulse uppercase">Initialisation...</div>;
 
-  // --- RENDU : APPLICATION PRINCIPALE (SANS RESTRICTIONS) ---
+  // --- RENDU : APPLICATION ---
   return (
     <div className="flex h-screen bg-[#f4f4f4] font-sans text-slate-900 print:block">
       <aside className="w-72 bg-[#1a1a1a] text-white flex flex-col border-r-4 border-[#ff6600] print:hidden">
-        <div className="p-8 bg-[#ff6600] text-black text-center font-black italic shadow-lg">
-          <h1 className="text-2xl tracking-tighter uppercase">KARAMABUS</h1>
-          <p className="text-[10px] uppercase font-bold tracking-widest tracking-widest">Service Technique Khenifra</p>
+        <div className="p-8 bg-white border-b-4 border-[#ff6600] flex justify-center">
+          <img src={LOGO_URL} alt="Logo Karamabus" className="h-12" />
         </div>
         <nav className="flex-1 px-4 py-6 space-y-3 font-black text-[11px] uppercase">
           <button onClick={() => setView('dashboard')} className={`w-full text-left p-4 rounded ${view === 'dashboard' ? 'bg-[#ff6600] text-black shadow-lg' : 'hover:bg-white/5'}`}>📊 Situation</button>
@@ -175,7 +180,8 @@ export default function App() {
 
       <main className="flex-1 p-10 overflow-auto print:p-0">
         <div className="hidden print:flex justify-between items-center border-b-4 border-black mb-8 pb-4">
-          <h1 className="text-2xl font-black uppercase italic">KARAMABUS KHENIFRA — Rapport Technique</h1>
+          <img src={LOGO_URL} alt="Logo" className="h-10" />
+          <h1 className="text-2xl font-black uppercase italic">Khenifra — Rapport Technique</h1>
           <p className="font-bold text-sm">Le {obtenirDateHeure()}</p>
         </div>
 
@@ -211,7 +217,7 @@ export default function App() {
                   </div>
                   <div className="p-4 bg-zinc-50"><p className="text-[10px] font-black uppercase text-gray-400 mb-3 border-b pb-1 underline italic">Surveillance</p>
                     {inventory.filter(i => i.bus_id === bus.id && i.categorie === 'SURVEILLANCE').map(i => (
-                      <div key={i.id} className="flex justify-between text-[11px] py-1 font-bold uppercase"><span>{i.nom}</span><span className="font-mono text-orange-600 font-black">{i.numero_serie}</span></div>
+                      <div key={i.id} className="flex justify-between text-[11px] py-1 font-bold uppercase"><span>{i.nom}</span><span className="font-mono text-[#ff6600] font-black">{i.numero_serie}</span></div>
                     ))}
                   </div>
                 </div>
@@ -226,16 +232,18 @@ export default function App() {
             <h2 className="text-3xl font-black uppercase border-b-8 border-black inline-block italic">Mise en Service</h2>
             <form onSubmit={handleAjoutCompletBus} className="space-y-6">
               <div className="grid grid-cols-3 gap-4 bg-white p-6 border-4 border-black">
-                <input type="text" placeholder="N° PARC" value={numParc} onChange={e => setNumParc(e.target.value)} className="border-2 p-3 font-black uppercase shadow-inner" required />
+                <input type="text" placeholder="N° PARC" value={numParc} onChange={e => setNumParc(e.target.value)} className="border-2 p-3 font-black uppercase" required />
                 <input type="text" placeholder="MODÈLE" value={modeleBus} onChange={e => setModeleBus(e.target.value)} className="border-2 p-3 font-bold uppercase" required />
                 <input type="text" placeholder="PLAQUE" value={plaque} onChange={e => setPlaque(e.target.value)} className="border-2 p-3 font-mono uppercase" required />
               </div>
               <div className="grid grid-cols-2 gap-8">
-                <div className="bg-white border-4 border-black p-6 shadow-lg"><h3 className="bg-black text-[#ff6600] p-2 font-black uppercase text-center mb-6 text-[10px] italic underline">Pack BOX</h3>
-                  {Object.keys(boxSN).map(k => <input key={k} type="text" placeholder={`S/N ${k.toUpperCase()}`} className="w-full border-2 p-2 mb-2 text-xs font-mono uppercase" onChange={e => setBoxSN({ ...boxSN, [k]: e.target.value })} />)}
+                <div className="bg-white border-4 border-black p-6 shadow-lg">
+                    <h3 className="bg-black text-[#ff6600] p-2 font-black uppercase text-center mb-6 text-[10px] italic">Pack BOX</h3>
+                    {Object.keys(boxSN).map(k => <input key={k} type="text" placeholder={`S/N ${k.toUpperCase()}`} className="w-full border-2 p-2 mb-2 text-xs font-mono uppercase" onChange={e => setBoxSN({ ...boxSN, [k]: e.target.value })} />)}
                 </div>
-                <div className="bg-white border-4 border-[#ff6600] p-6 shadow-lg"><h3 className="bg-[#ff6600] text-black p-2 font-black uppercase text-center mb-6 text-[10px] italic underline">Pack SURVEILLANCE</h3>
-                  {Object.keys(survSN).map(k => <input key={k} type="text" placeholder={`S/N ${k.toUpperCase()}`} className="w-full border-2 p-2 mb-2 text-xs font-mono uppercase" onChange={e => setSurvSN({ ...survSN, [k]: e.target.value })} />)}
+                <div className="bg-white border-4 border-[#ff6600] p-6 shadow-lg">
+                    <h3 className="bg-[#ff6600] text-black p-2 font-black uppercase text-center mb-6 text-[10px] italic">Pack SURVEILLANCE</h3>
+                    {Object.keys(survSN).map(k => <input key={k} type="text" placeholder={`S/N ${k.toUpperCase()}`} className="w-full border-2 p-2 mb-2 text-xs font-mono uppercase" onChange={e => setSurvSN({ ...survSN, [k]: e.target.value })} />)}
                 </div>
               </div>
               <button type="submit" className="w-full bg-black text-[#ff6600] p-5 font-black uppercase text-xl border-4 border-black shadow-xl hover:bg-[#ff6600] hover:text-black transition-all">Enregistrer Installation</button>
@@ -243,7 +251,7 @@ export default function App() {
             <div className="mt-10">
               <h3 className="text-xl font-black uppercase mb-4 border-l-8 border-black pl-3">Bus Actifs</h3>
               {busList.map(b => (
-                <div key={b.id} className="bg-white p-4 border-4 border-black flex justify-between items-center mb-2 shadow-sm">
+                <div key={b.id} className="bg-white p-4 border-4 border-black flex justify-between items-center mb-2">
                   <span className="font-black text-xl uppercase tracking-widest">{b.numero_parc}</span>
                   <button onClick={() => supprimerBus(b.id)} className="bg-red-600 text-white px-6 py-2 rounded font-black text-xs uppercase border-2 border-black hover:bg-black transition-all">Supprimer</button>
                 </div>
@@ -263,7 +271,7 @@ export default function App() {
               </select>
               <input type="text" placeholder="S/N DÉFECTUEUX" value={oldSN} onChange={e => setOldSN(e.target.value)} className="p-3 border-2 border-red-200 bg-red-50 font-mono uppercase" required />
               <input type="text" placeholder="S/N ENTRANT" value={newSN} onChange={e => setNewSN(e.target.value)} className="p-3 border-2 border-green-200 bg-green-50 font-mono uppercase" required />
-              <textarea placeholder="Raison de la panne..." value={raison} onChange={e => setRaison(e.target.value)} className="col-span-2 border-2 p-3 h-20 font-bold uppercase italic shadow-inner" required />
+              <textarea placeholder="Raison de la panne..." value={raison} onChange={e => setRaison(e.target.value)} className="col-span-2 border-2 p-3 h-20 font-bold uppercase italic" required />
               <button type="submit" className="col-span-2 bg-black text-[#ff6600] p-4 font-black uppercase border-2 border-black hover:bg-orange-600 hover:text-white transition-all">Valider l'Échange</button>
             </form>
             <table className="w-full bg-white border-4 border-black text-[10px]">
@@ -274,7 +282,7 @@ export default function App() {
                 {logs.map(log => {
                   const d = new Date(log.date_intervention);
                   return (
-                    <tr key={log.id} className="border-b border-black/10 hover:bg-slate-50">
+                    <tr key={log.id} className="border-b border-black/10">
                       <td className="p-3 font-bold">{d.toLocaleDateString()}<br /><span className="text-[10px] italic opacity-60">à {d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span></td>
                       <td className="p-3 font-black text-blue-700 uppercase">{log.bus?.numero_parc}</td>
                       <td className="p-3 font-mono text-red-600 font-bold italic">{log.materiel_sortant_sn}</td>
@@ -298,12 +306,12 @@ export default function App() {
                 <input type="text" placeholder="Désignation" value={itemName} onChange={e => setItemName(e.target.value)} className="border-2 p-2 flex-1 font-bold uppercase" required />
                 <input type="text" placeholder="N° de Série" value={itemSN} onChange={e => setItemSN(e.target.value)} className="border-2 p-2 flex-1 font-mono uppercase" required />
                 <select value={itemCat} onChange={e => setItemCat(e.target.value)} className="border-2 p-2 font-black uppercase text-[10px] bg-slate-50"><option value="BOX">BOX</option><option value="SURVEILLANCE">SURVEILLANCE</option></select>
-                <button className="bg-black text-white px-6 font-bold uppercase text-[10px] border-2 border-black hover:bg-[#ff6600] transition-all shadow-md">Ajouter Réserve</button>
+                <button className="bg-black text-white px-6 font-bold uppercase text-[10px]">Ajouter Réserve</button>
               </form>
             </div>
             <div className="grid grid-cols-2 gap-8 items-start h-[500px]">
               <div className="bg-white border-2 border-black overflow-hidden shadow-xl h-full">
-                <div className="bg-black text-[#ff6600] p-3 font-black uppercase text-xs italic border-b-2 border-white">📦 Réserve Khenifra (Qté)</div>
+                <div className="bg-black text-[#ff6600] p-3 font-black uppercase text-xs italic">📦 Réserve Locale (Qté)</div>
                 <table className="w-full text-xs table-fixed">
                   <thead className="bg-slate-100 border-b-2 border-black font-black uppercase italic"><tr><th className="p-2 text-left w-1/2">Désignation</th><th className="p-2 text-center w-24">Quantité</th></tr></thead>
                   <tbody>
@@ -314,7 +322,7 @@ export default function App() {
                 </table>
               </div>
               <div className="bg-white border-2 border-red-600 overflow-hidden shadow-xl h-full">
-                <div className="bg-red-600 text-white p-3 font-black uppercase text-xs flex justify-between items-center h-12 border-b-2 border-black"><span>⚠️ Envoi au Siège</span><button onClick={validerExpeditionSiege} className="bg-black text-white px-3 py-1 text-[8px] border font-black uppercase hover:bg-white hover:text-black">Valider Envoi</button></div>
+                <div className="bg-red-600 text-white p-3 font-black uppercase text-xs flex justify-between items-center h-12 border-b-2 border-black"><span>⚠️ Envoi au Siège</span><button onClick={validerExpeditionSiege} className="bg-black text-white px-3 py-1 text-[8px] border font-black uppercase">Valider Envoi</button></div>
                 <table className="w-full text-[10px] table-fixed">
                   <tbody>
                     {inventory.filter(i => i.en_panne).map(i => (
@@ -324,19 +332,10 @@ export default function App() {
                 </table>
               </div>
             </div>
-            <div className="space-y-4">
-              <h3 className="font-black uppercase text-lg italic border-l-8 border-orange-600 pl-3">Derniers rapports d'envoi</h3>
-              {archivesEnvoi.map(a => (
-                <div key={a.id} className="bg-white p-4 border-2 border-black shadow-md italic">
-                  <p className="font-bold text-[10px] uppercase text-gray-400">Rapport du {new Date(a.date_envoi).toLocaleString()}</p>
-                  <p className="font-mono text-[10px] mt-2 border-l-4 border-gray-100 pl-3 leading-relaxed">{a.liste_materiels}</p>
-                </div>
-              ))}
-            </div>
           </div>
         )}
       </main>
-      <button onClick={() => window.print()} className="fixed bottom-10 right-10 bg-black text-[#ff6600] p-6 rounded-full shadow-2xl font-black border-4 border-[#ff6600] print:hidden hover:scale-125 transition-all uppercase z-50">🖨️ Imprimer</button>
+      <button onClick={() => window.print()} className="fixed bottom-10 right-10 bg-black text-[#ff6600] p-6 rounded-full shadow-2xl font-black border-4 border-[#ff6600] print:hidden hover:scale-110 transition-all uppercase z-50">🖨️ Imprimer</button>
     </div>
   );
 }
